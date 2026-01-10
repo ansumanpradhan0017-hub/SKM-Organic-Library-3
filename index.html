@@ -1,0 +1,232 @@
+This is the **"Raw Feed"** version.
+
+I have stripped away all the "Chapter" and "Topic" categories. It will simply take your list of 160 links and generate a clean, clickable list, preserving the exact order you provided them in.
+
+### The "No-Nonsense" Code
+
+Copy this into your `index.html`. It is a single, unified list of all 160 videos.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKM Sir Organic - Full Index</title>
+    <style>
+        body { font-family: monospace; background: #111; color: #0f0; padding: 20px; max-width: 800px; margin: 0 auto; }
+        h1 { border-bottom: 2px solid #0f0; padding-bottom: 10px; }
+        .counter { color: #888; margin-bottom: 20px; font-family: sans-serif; }
+        
+        /* The Link List */
+        .link-item { 
+            display: block; 
+            padding: 10px; 
+            margin: 5px 0; 
+            background: #222; 
+            color: #ccc; 
+            text-decoration: none; 
+            border-left: 3px solid #444;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: 0.1s;
+        }
+        .link-item:hover { 
+            background: #333; 
+            border-left-color: #0f0; 
+            color: #fff; 
+        }
+        .index-tag { color: #0f0; font-weight: bold; margin-right: 15px; }
+    </style>
+</head>
+<body>
+
+<h1>Raw Video Index</h1>
+<div class="counter" id="count">Loading...</div>
+<div id="list"></div>
+
+<script>
+const rawData = `
+https://www.youtube.com/watch?v=70s68psesU0&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=1&t=2395s&pp=iAQB
+https://www.youtube.com/watch?v=9TzY4Lbltpg&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=2&pp=iAQB
+https://www.youtube.com/watch?v=aBi-Q_auw6A&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=3&pp=iAQB
+https://www.youtube.com/watch?v=HVLZE_pcz9w&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=4&pp=iAQB
+https://www.youtube.com/watch?v=PW0gAx1AvvY&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=5&t=1387s&pp=iAQB
+https://www.youtube.com/watch?v=2_x2Agyc4d8&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=6&t=4077s&pp=iAQB
+https://www.youtube.com/watch?v=sQq_lyC9INY&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=7&pp=iAQB
+https://www.youtube.com/watch?v=oTfOoIzDvNw&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=8&pp=iAQB
+https://www.youtube.com/watch?v=KE9bjiX9Cfk&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=9&pp=iAQB
+https://www.youtube.com/watch?v=yk3VdfuNxlk&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=14&pp=iAQB
+https://www.youtube.com/watch?v=LACA13wXE8M&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=13&pp=iAQB
+https://www.youtube.com/watch?v=_c0HwjINjao&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=12&pp=iAQB
+https://www.youtube.com/watch?v=D7RrlxcdGgw&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=11&pp=iAQB
+https://www.youtube.com/watch?v=g9WDw9xsWvQ&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=10&pp=iAQB
+https://www.youtube.com/watch?v=ylklQqMFU-c&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=15&pp=iAQB
+https://www.youtube.com/watch?v=DwWavwICoj0&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=16&pp=iAQB
+https://www.youtube.com/watch?v=fHGGq_dCc28&list=PLTUWmMSxzl33BP-alKpLVredEl7NLXLj2&index=17&pp=iAQB
+https://www.youtube.com/watch?v=w8vxDlOpzSo&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=1&pp=iAQB
+https://www.youtube.com/watch?v=hev5t-FGtlQ&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=2&pp=iAQB
+https://www.youtube.com/watch?v=K-DHpzU2TxY&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=3&pp=iAQB
+https://www.youtube.com/watch?v=NA7SU-03iJw&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=4&pp=iAQB
+https://www.youtube.com/watch?v=bOWCw_tJThM&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=5&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=AYFIXWC_Yys&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=6&pp=iAQB
+https://www.youtube.com/watch?v=sIudrPCNHHU&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=7&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=AudowNBHBVM&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=8&pp=iAQB
+https://www.youtube.com/watch?v=i3MlNqvU-zc&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=9&pp=iAQB
+https://www.youtube.com/watch?v=o2f0JQzXQh0&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=10&pp=iAQB
+https://www.youtube.com/watch?v=LhDuUOKIOJc&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=11&pp=iAQB
+https://www.youtube.com/watch?v=9XYTAgSW3AI&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=12&pp=iAQB
+https://www.youtube.com/watch?v=Ddr6CaBhKok&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=13&pp=iAQB
+https://www.youtube.com/watch?v=6LK94k0wq0g&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=14&pp=iAQB
+https://www.youtube.com/watch?v=OqSfHS2IAjg&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=15&pp=iAQB
+https://www.youtube.com/watch?v=Vw-MG3ixKzE&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=16&pp=iAQB
+https://www.youtube.com/watch?v=BrYZ54TppSA&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=17&pp=iAQB
+https://www.youtube.com/watch?v=Mu12mgJCTVU&list=PLTUWmMSxzl313xdAMe9umVrgE2nB57O-4&index=18&pp=iAQB
+https://www.youtube.com/watch?v=GJ8Iv9Ie77w&list=PLTUWmMSxzl30pilkbsoVS-ZkOTTa8lsGv&index=1&pp=iAQB
+https://www.youtube.com/watch?v=JGZiP0L9iZA&list=PLTUWmMSxzl30pilkbsoVS-ZkOTTa8lsGv&index=2&pp=iAQB
+https://www.youtube.com/watch?v=PhTKEKCQVx8&list=PLTUWmMSxzl30pilkbsoVS-ZkOTTa8lsGv&index=3&pp=iAQB
+https://www.youtube.com/watch?v=tgW7t8IxcaI&list=PLTUWmMSxzl30pilkbsoVS-ZkOTTa8lsGv&index=4&pp=iAQB
+https://www.youtube.com/watch?v=n6KsAg7w5W4&list=PLTUWmMSxzl30pilkbsoVS-ZkOTTa8lsGv&index=5&pp=iAQB
+https://www.youtube.com/watch?v=J-q9TYomMik&list=PLTUWmMSxzl330i7qnl0EGYOb2mRXE5F4S&index=1&pp=iAQB
+https://www.youtube.com/watch?v=_Lawlhfe9_E&list=PLTUWmMSxzl330i7qnl0EGYOb2mRXE5F4S&index=2&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=_PqGcSVNhRw&list=PLTUWmMSxzl330i7qnl0EGYOb2mRXE5F4S&index=3&pp=iAQB
+https://www.youtube.com/watch?v=aQi7RvKQXqg&list=PLTUWmMSxzl330i7qnl0EGYOb2mRXE5F4S&index=4&pp=iAQB
+https://www.youtube.com/watch?v=_O7VlSZyjM0&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=1&pp=iAQB
+https://www.youtube.com/watch?v=nxpGeG_1_fg&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=2&pp=iAQB
+https://www.youtube.com/watch?v=oSlWQkXjPxs&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=3&pp=iAQB
+https://www.youtube.com/watch?v=aBhRTC9ee-8&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=4&pp=iAQB
+https://www.youtube.com/watch?v=Xe8hSniW07g&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=5&pp=iAQB
+https://www.youtube.com/watch?v=JYV5t_GI4Wo&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=6&pp=iAQB
+https://www.youtube.com/watch?v=a9hYtMP9WCI&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=7&pp=iAQB
+https://www.youtube.com/watch?v=huP_NknKkD8&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=8&pp=iAQB
+https://www.youtube.com/watch?v=pDxWPWEHQbw&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=9&pp=iAQB
+https://www.youtube.com/watch?v=sU16aWGhEgU&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=10&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=u87ye0y4KFQ&list=PLTUWmMSxzl30_RDJYu80FflcL_CoTWu57&index=11&pp=iAQB
+https://www.youtube.com/watch?v=tSynzBTb5Pw&list=PLTUWmMSxzl31SQZtTQFGxNMC3n4GcKEXF&index=1&pp=iAQB
+https://www.youtube.com/watch?v=7_ETrd_Ts4w&list=PLTUWmMSxzl31SQZtTQFGxNMC3n4GcKEXF&index=2&pp=iAQB
+https://www.youtube.com/watch?v=wfKNmdQC8xk&list=PLTUWmMSxzl31SQZtTQFGxNMC3n4GcKEXF&index=3&pp=iAQB
+https://www.youtube.com/watch?v=8HvXT6plPhc&list=PLTUWmMSxzl31641cWe6UoINf-HwezXnIA&index=1&pp=iAQB
+https://www.youtube.com/watch?v=3pVNQRSoVzo&list=PLTUWmMSxzl31bjzZ7vFhOM2a9GTENhN8K&index=1&pp=iAQB
+https://www.youtube.com/watch?v=5Ikb3oJ5NO0&list=PLTUWmMSxzl31bjzZ7vFhOM2a9GTENhN8K&index=2&pp=iAQB
+https://www.youtube.com/watch?v=TowvNFAyhyI&list=PLTUWmMSxzl316FEN0wky0EFeS3EuwXbdt&index=1&pp=iAQB
+https://www.youtube.com/watch?v=zFeawrSy5SE&list=PLTUWmMSxzl316FEN0wky0EFeS3EuwXbdt&index=2&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=K3dFkoQMhHg&list=PLTUWmMSxzl316FEN0wky0EFeS3EuwXbdt&index=3&pp=iAQB
+https://www.youtube.com/watch?v=xarTwCh8RLg&list=PLTUWmMSxzl316FEN0wky0EFeS3EuwXbdt&index=4&pp=iAQB
+https://www.youtube.com/watch?v=e4l-iN4_4Ek&list=PLTUWmMSxzl316FEN0wky0EFeS3EuwXbdt&index=5&pp=iAQB
+https://www.youtube.com/watch?v=ogxpfbiNuq8&list=PLTUWmMSxzl316FEN0wky0EFeS3EuwXbdt&index=6&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=ZQ9-d_SBwEo&list=PLTUWmMSxzl316FEN0wky0EFeS3EuwXbdt&index=7&pp=iAQB
+https://www.youtube.com/watch?v=HmXePJ3qoMw&list=PLTUWmMSxzl30Cz3EwQNYizXQhhXk3OkOk&index=1&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=Zl1P8m3G_bs&list=PLTUWmMSxzl30Cz3EwQNYizXQhhXk3OkOk&index=2&pp=iAQB
+https://www.youtube.com/watch?v=bapiczMAxm0&list=PLTUWmMSxzl30Cz3EwQNYizXQhhXk3OkOk&index=3&pp=iAQB
+https://www.youtube.com/watch?v=mACaoJMkcQc&list=PLTUWmMSxzl30Cz3EwQNYizXQhhXk3OkOk&index=4&pp=iAQB
+https://www.youtube.com/watch?v=jdIe89YnSmQ&list=PLTUWmMSxzl30Cz3EwQNYizXQhhXk3OkOk&index=5&pp=iAQB
+https://www.youtube.com/watch?v=BK-NHT3nH4E&list=PLTUWmMSxzl30Cz3EwQNYizXQhhXk3OkOk&index=6&pp=iAQB
+https://www.youtube.com/watch?v=8upCe9Ov2Co&list=PLTUWmMSxzl30Cz3EwQNYizXQhhXk3OkOk&index=7&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=QUszRg8OYDc&list=PLTUWmMSxzl30Cz3EwQNYizXQhhXk3OkOk&index=8&pp=iAQB
+https://www.youtube.com/watch?v=PCZFD9QmI1g&list=PLTUWmMSxzl31VYF7bITyJV2kW88MkucCR&index=1&pp=iAQB
+https://www.youtube.com/watch?v=1OavabiwfRo&list=PLTUWmMSxzl31VYF7bITyJV2kW88MkucCR&index=2&pp=iAQB
+https://www.youtube.com/watch?v=loeIJwyHJ-I&list=PLTUWmMSxzl31VYF7bITyJV2kW88MkucCR&index=3&pp=iAQB
+https://www.youtube.com/watch?v=maK4gv8g4Ds&list=PLTUWmMSxzl33q2GmoQZ3tk60B2hWKE6Jc&index=1&pp=iAQB
+https://www.youtube.com/watch?v=5tRZuriqj8Q&list=PLTUWmMSxzl33q2GmoQZ3tk60B2hWKE6Jc&index=2&pp=iAQB
+https://www.youtube.com/watch?v=BlQMWhwM4vE&list=PLTUWmMSxzl33q2GmoQZ3tk60B2hWKE6Jc&index=3&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=vd-wUsNR850&list=PLTUWmMSxzl33Pc8t7HUwuktGeFiuaaNmq&index=1&pp=iAQB
+https://www.youtube.com/watch?v=GJZGEO9dUjU&list=PLTUWmMSxzl33fxrRPo93i6o6g0IQMP11y&index=1&pp=iAQB
+https://www.youtube.com/watch?v=TByIu9gIFTs&list=PLTUWmMSxzl33fxrRPo93i6o6g0IQMP11y&index=2&pp=iAQB
+https://www.youtube.com/watch?v=ocLLTlzpfd8&list=PLTUWmMSxzl33fxrRPo93i6o6g0IQMP11y&index=3&pp=iAQB
+https://www.youtube.com/watch?v=kK8J9pG6F3s&list=PLTUWmMSxzl33fxrRPo93i6o6g0IQMP11y&index=4&pp=iAQB
+https://www.youtube.com/watch?v=kQqSZfJSl9w&list=PLTUWmMSxzl33fxrRPo93i6o6g0IQMP11y&index=5&pp=iAQB
+https://www.youtube.com/watch?v=pzD90u4R1xs&list=PLTUWmMSxzl33fxrRPo93i6o6g0IQMP11y&index=6&pp=iAQB
+https://www.youtube.com/watch?v=KRjznJma4XA&list=PLTUWmMSxzl33fxrRPo93i6o6g0IQMP11y&index=7&pp=iAQB
+https://www.youtube.com/watch?v=f_90ozpJyAI&list=PLTUWmMSxzl33fxrRPo93i6o6g0IQMP11y&index=8&pp=iAQB
+https://www.youtube.com/watch?v=PrkWaGPQynA&list=PLTUWmMSxzl300UgEHocPZ1rIDRl7XSX7A&index=1&pp=iAQB
+https://www.youtube.com/watch?v=k2TCrNu_vL0&list=PLTUWmMSxzl300UgEHocPZ1rIDRl7XSX7A&index=2&pp=iAQB
+https://www.youtube.com/watch?v=xVqMoHEV5n4&list=PLTUWmMSxzl300UgEHocPZ1rIDRl7XSX7A&index=3&pp=iAQB
+https://www.youtube.com/watch?v=d_3Itc_OMJ0&list=PLTUWmMSxzl300UgEHocPZ1rIDRl7XSX7A&index=4&pp=iAQB
+https://www.youtube.com/watch?v=Qhr8vO7keWc&list=PLTUWmMSxzl300UgEHocPZ1rIDRl7XSX7A&index=5&pp=iAQB
+https://www.youtube.com/watch?v=cmHo91YlMEw&list=PLTUWmMSxzl300UgEHocPZ1rIDRl7XSX7A&index=6&pp=iAQB
+https://www.youtube.com/watch?v=vXJYExdZyz8&list=PLTUWmMSxzl33GWxLVRP8O7DOd8VT0zby5&index=1&pp=iAQB
+https://www.youtube.com/watch?v=DqDK5K7YY6E&list=PLTUWmMSxzl33GWxLVRP8O7DOd8VT0zby5&index=2&pp=iAQB
+https://www.youtube.com/watch?v=sp23epCS8Hg&list=PLTUWmMSxzl33GWxLVRP8O7DOd8VT0zby5&index=3&pp=iAQB
+https://www.youtube.com/watch?v=-CAIM66YcZ4&list=PLTUWmMSxzl33GWxLVRP8O7DOd8VT0zby5&index=4&pp=iAQB
+https://www.youtube.com/watch?v=pUMNErm8hK0&list=PLTUWmMSxzl33GWxLVRP8O7DOd8VT0zby5&index=5&pp=iAQB
+https://www.youtube.com/watch?v=YYMtNhIZyVA&list=PLTUWmMSxzl33GWxLVRP8O7DOd8VT0zby5&index=6&pp=iAQB
+https://www.youtube.com/watch?v=-V1sBUprVvo&list=PLTUWmMSxzl33GWxLVRP8O7DOd8VT0zby5&index=7&pp=iAQB
+https://www.youtube.com/watch?v=2gAv1sf795Y&list=PLTUWmMSxzl33fyBAmBRr6NzUxZF2U-p44&index=1&pp=iAQB
+https://www.youtube.com/watch?v=XGpVL5XHyLs&list=PLTUWmMSxzl33fyBAmBRr6NzUxZF2U-p44&index=2&pp=iAQB
+https://www.youtube.com/watch?v=VGmYYEHv7eI&list=PLTUWmMSxzl33fyBAmBRr6NzUxZF2U-p44&index=3&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=W8fDC05-kpU&list=PLTUWmMSxzl33fyBAmBRr6NzUxZF2U-p44&index=4&pp=iAQB
+https://www.youtube.com/watch?v=7VvciEb3KI0&list=PLTUWmMSxzl33fyBAmBRr6NzUxZF2U-p44&index=5&pp=iAQB
+https://www.youtube.com/watch?v=PgbVlpnEve0&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=1&pp=iAQB
+https://www.youtube.com/watch?v=8JvcQMaR-D4&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=2&pp=iAQB
+https://www.youtube.com/watch?v=F3YS2-DCL2c&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=3&pp=iAQB
+https://www.youtube.com/watch?v=EKXcvB7vBKc&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=4&pp=iAQB
+https://www.youtube.com/watch?v=BziXjEyN6Mw&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=5&pp=iAQB
+https://www.youtube.com/watch?v=ajYWcTkQv6s&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=6&pp=iAQB
+https://www.youtube.com/watch?v=XMVzaNmnp7s&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=7&pp=iAQB
+https://www.youtube.com/watch?v=0Wa7DwOzvqw&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=8&pp=iAQB
+https://www.youtube.com/watch?v=_5iVFRMVHB8&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=9&pp=iAQB
+https://www.youtube.com/watch?v=4M0sKRONXU4&list=PLTUWmMSxzl33iWDtQNadwMVGKLkFkVDcr&index=1&pp=iAQB
+https://www.youtube.com/watch?v=D-PAUzcoAXc&list=PLTUWmMSxzl33iWDtQNadwMVGKLkFkVDcr&index=2&pp=iAQB
+https://www.youtube.com/watch?v=Qu7dIZT84IY&list=PLTUWmMSxzl33iWDtQNadwMVGKLkFkVDcr&index=3&pp=iAQB
+https://www.youtube.com/watch?v=8BCovpho-JM&list=PLTUWmMSxzl33iWDtQNadwMVGKLkFkVDcr&index=4&pp=iAQB
+https://www.youtube.com/watch?v=HerN1J3jBXo&list=PLTUWmMSxzl33iWDtQNadwMVGKLkFkVDcr&index=5&pp=iAQB
+https://www.youtube.com/watch?v=DTEgeDmeVvM&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=1&pp=iAQB
+https://www.youtube.com/watch?v=oSaK4X6Vnak&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=2&pp=iAQB
+https://www.youtube.com/watch?v=f1h7G3SbTCE&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=3&pp=iAQB
+https://www.youtube.com/watch?v=Mh3XGs__sKM&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=4&pp=iAQB
+https://www.youtube.com/watch?v=u_tzV2CCfyY&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=5&pp=iAQB
+https://www.youtube.com/watch?v=NKi9beA_XhY&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=6&pp=iAQB
+https://www.youtube.com/watch?v=KlORKhrFVfc&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=7&pp=iAQB
+https://www.youtube.com/watch?v=U-pGKjoXOug&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=8&pp=iAQB
+https://www.youtube.com/watch?v=hC2YTwK0rD8&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=9&pp=iAQB
+https://www.youtube.com/watch?v=LstaTt7uiNw&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=10&pp=iAQB
+https://www.youtube.com/watch?v=ZlzSKRu09z0&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=11&pp=iAQB
+https://www.youtube.com/watch?v=dQokI92-Y0I&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=12&pp=iAQB
+https://www.youtube.com/watch?v=1mVSsaOKySM&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=13&pp=iAQB
+https://www.youtube.com/watch?v=jfti-Ib8WCY&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=14&pp=iAQB
+https://www.youtube.com/watch?v=pOh0fvQmD9Y&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=15&pp=iAQB
+https://www.youtube.com/watch?v=PNRxlr8blYk&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=16&pp=iAQB
+https://www.youtube.com/watch?v=mXMv1dJ9tsQ&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=17&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=ujs4v-rykQI&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=18&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=6HfdY6RUjQI&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=19&pp=iAQB
+https://www.youtube.com/watch?v=ojcjWy1y42Y&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=20&pp=iAQB
+https://www.youtube.com/watch?v=VAms8dO3sm4&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=21&pp=iAQB
+https://www.youtube.com/watch?v=et8RKX6xchk&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=22&pp=iAQB
+https://www.youtube.com/watch?v=1v67faLGKD4&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=23&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=KUGWfI-PgDY&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=1&pp=iAQB
+https://www.youtube.com/watch?v=XuNoXsF7-gQ&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=2&pp=iAQB
+https://www.youtube.com/watch?v=618C0VwpzyI&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=3&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=qsjShGALdnU&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=4&pp=iAQB
+https://www.youtube.com/watch?v=zNIy-5YouPc&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=5&pp=iAQB
+https://www.youtube.com/watch?v=v81zXc4EBq4&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=6&pp=iAQB
+https://www.youtube.com/watch?v=txyeNHQxTYs&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=7&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=Cw4aaabC_UY&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=8&pp=iAQB
+https://www.youtube.com/watch?v=q2gyklmcx5o&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=9&pp=iAQB
+https://www.youtube.com/watch?v=nobSL7QQk5A&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=10&pp=iAQB
+https://www.youtube.com/watch?v=v88BJsQEhmw&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=11&pp=iAQB
+https://www.youtube.com/watch?v=h6BUouIh0d4&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=12&pp=iAQB
+https://www.youtube.com/watch?v=T9zFm1LiMds&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=13&pp=iAQB0gcJCU0KAYcqIYzv
+https://www.youtube.com/watch?v=00RHkhvngo4&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=14&pp=iAQB
+`;
+
+// Render the list
+const listContainer = document.getElementById('list');
+const lines = rawData.trim().split('\n').filter(l => l.trim().length > 0);
+document.getElementById('count').innerText = `Total Videos: ${lines.length}`;
+
+lines.forEach((link, i) => {
+    const a = document.createElement('a');
+    a.href = link;
+    a.className = 'link-item';
+    a.target = '_blank';
+    a.innerHTML = `<span class="index-tag">#${i + 1}</span> ${link}`;
+    listContainer.appendChild(a);
+});
+
+</script>
+</body>
+</html>
+
+```
