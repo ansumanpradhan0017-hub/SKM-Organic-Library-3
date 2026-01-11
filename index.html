@@ -1,50 +1,63 @@
-This is the **"Raw Feed"** version.
-
-I have stripped away all the "Chapter" and "Topic" categories. It will simply take your list of 160 links and generate a clean, clickable list, preserving the exact order you provided them in.
-
-### The "No-Nonsense" Code
-
-Copy this into your `index.html`. It is a single, unified list of all 160 videos.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKM Sir Organic - Full Index</title>
+    <title>SKM Sir Organic - Progress Tracker</title>
     <style>
         body { font-family: monospace; background: #111; color: #0f0; padding: 20px; max-width: 800px; margin: 0 auto; }
         h1 { border-bottom: 2px solid #0f0; padding-bottom: 10px; }
         .counter { color: #888; margin-bottom: 20px; font-family: sans-serif; }
         
-        /* The Link List */
+        /* Layout for the row */
+        .item-container {
+            display: flex;
+            align-items: center;
+            background: #222;
+            margin: 5px 0;
+            padding: 5px 10px;
+            border-left: 3px solid #444;
+            transition: 0.1s;
+        }
+        
+        .item-container:hover {
+            background: #2a2a2a;
+            border-left-color: #0f0;
+        }
+
+        /* Checkbox Styling */
+        input[type="checkbox"] {
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #0f0; /* Makes the tick green */
+            transform: scale(1.2);
+        }
+
+        /* The Link */
         .link-item { 
-            display: block; 
-            padding: 10px; 
-            margin: 5px 0; 
-            background: #222; 
             color: #ccc; 
             text-decoration: none; 
-            border-left: 3px solid #444;
             font-size: 14px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            transition: 0.1s;
+            flex-grow: 1;
         }
-        .link-item:hover { 
-            background: #333; 
-            border-left-color: #0f0; 
-            color: #fff; 
+
+        .link-item:hover { color: #fff; }
+        .index-tag { color: #0f0; font-weight: bold; margin-right: 10px; }
+        
+        /* Completed State */
+        .completed .link-item {
+            text-decoration: line-through;
+            color: #555;
         }
-        .index-tag { color: #0f0; font-weight: bold; margin-right: 15px; }
     </style>
 </head>
 <body>
 
-<h1>Raw Video Index</h1>
-<div class="counter" id="count">Loading...</div>
+<h1>Organic Library + Progress</h1>
+<div class="counter" id="count">Total Videos: 0 | Completed: 0</div>
 <div id="list"></div>
 
 <script>
@@ -165,68 +178,58 @@ https://www.youtube.com/watch?v=EKXcvB7vBKc&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9
 https://www.youtube.com/watch?v=BziXjEyN6Mw&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=5&pp=iAQB
 https://www.youtube.com/watch?v=ajYWcTkQv6s&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=6&pp=iAQB
 https://www.youtube.com/watch?v=XMVzaNmnp7s&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=7&pp=iAQB
-https://www.youtube.com/watch?v=0Wa7DwOzvqw&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=8&pp=iAQB
-https://www.youtube.com/watch?v=_5iVFRMVHB8&list=PLTUWmMSxzl33Ca9Ujz2qfrj2IbqCJ9lfv&index=9&pp=iAQB
-https://www.youtube.com/watch?v=4M0sKRONXU4&list=PLTUWmMSxzl33iWDtQNadwMVGKLkFkVDcr&index=1&pp=iAQB
-https://www.youtube.com/watch?v=D-PAUzcoAXc&list=PLTUWmMSxzl33iWDtQNadwMVGKLkFkVDcr&index=2&pp=iAQB
-https://www.youtube.com/watch?v=Qu7dIZT84IY&list=PLTUWmMSxzl33iWDtQNadwMVGKLkFkVDcr&index=3&pp=iAQB
-https://www.youtube.com/watch?v=8BCovpho-JM&list=PLTUWmMSxzl33iWDtQNadwMVGKLkFkVDcr&index=4&pp=iAQB
-https://www.youtube.com/watch?v=HerN1J3jBXo&list=PLTUWmMSxzl33iWDtQNadwMVGKLkFkVDcr&index=5&pp=iAQB
-https://www.youtube.com/watch?v=DTEgeDmeVvM&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=1&pp=iAQB
-https://www.youtube.com/watch?v=oSaK4X6Vnak&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=2&pp=iAQB
-https://www.youtube.com/watch?v=f1h7G3SbTCE&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=3&pp=iAQB
-https://www.youtube.com/watch?v=Mh3XGs__sKM&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=4&pp=iAQB
-https://www.youtube.com/watch?v=u_tzV2CCfyY&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=5&pp=iAQB
-https://www.youtube.com/watch?v=NKi9beA_XhY&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=6&pp=iAQB
-https://www.youtube.com/watch?v=KlORKhrFVfc&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=7&pp=iAQB
-https://www.youtube.com/watch?v=U-pGKjoXOug&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=8&pp=iAQB
-https://www.youtube.com/watch?v=hC2YTwK0rD8&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=9&pp=iAQB
-https://www.youtube.com/watch?v=LstaTt7uiNw&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=10&pp=iAQB
-https://www.youtube.com/watch?v=ZlzSKRu09z0&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=11&pp=iAQB
-https://www.youtube.com/watch?v=dQokI92-Y0I&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=12&pp=iAQB
-https://www.youtube.com/watch?v=1mVSsaOKySM&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=13&pp=iAQB
-https://www.youtube.com/watch?v=jfti-Ib8WCY&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=14&pp=iAQB
-https://www.youtube.com/watch?v=pOh0fvQmD9Y&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=15&pp=iAQB
-https://www.youtube.com/watch?v=PNRxlr8blYk&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=16&pp=iAQB
-https://www.youtube.com/watch?v=mXMv1dJ9tsQ&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=17&pp=iAQB0gcJCU0KAYcqIYzv
-https://www.youtube.com/watch?v=ujs4v-rykQI&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=18&pp=iAQB0gcJCU0KAYcqIYzv
-https://www.youtube.com/watch?v=6HfdY6RUjQI&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=19&pp=iAQB
-https://www.youtube.com/watch?v=ojcjWy1y42Y&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=20&pp=iAQB
-https://www.youtube.com/watch?v=VAms8dO3sm4&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=21&pp=iAQB
-https://www.youtube.com/watch?v=et8RKX6xchk&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=22&pp=iAQB
-https://www.youtube.com/watch?v=1v67faLGKD4&list=PLTUWmMSxzl32wymis85nQECXGY4IVe3_b&index=23&pp=iAQB0gcJCU0KAYcqIYzv
-https://www.youtube.com/watch?v=KUGWfI-PgDY&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=1&pp=iAQB
-https://www.youtube.com/watch?v=XuNoXsF7-gQ&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=2&pp=iAQB
-https://www.youtube.com/watch?v=618C0VwpzyI&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=3&pp=iAQB0gcJCU0KAYcqIYzv
-https://www.youtube.com/watch?v=qsjShGALdnU&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=4&pp=iAQB
-https://www.youtube.com/watch?v=zNIy-5YouPc&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=5&pp=iAQB
-https://www.youtube.com/watch?v=v81zXc4EBq4&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=6&pp=iAQB
-https://www.youtube.com/watch?v=txyeNHQxTYs&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=7&pp=iAQB0gcJCU0KAYcqIYzv
-https://www.youtube.com/watch?v=Cw4aaabC_UY&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=8&pp=iAQB
-https://www.youtube.com/watch?v=q2gyklmcx5o&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=9&pp=iAQB
-https://www.youtube.com/watch?v=nobSL7QQk5A&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=10&pp=iAQB
-https://www.youtube.com/watch?v=v88BJsQEhmw&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=11&pp=iAQB
-https://www.youtube.com/watch?v=h6BUouIh0d4&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=12&pp=iAQB
-https://www.youtube.com/watch?v=T9zFm1LiMds&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=13&pp=iAQB0gcJCU0KAYcqIYzv
 https://www.youtube.com/watch?v=00RHkhvngo4&list=PLTUWmMSxzl30wXR9M9-BeheJfSeb-hm3a&index=14&pp=iAQB
 `;
 
-// Render the list
 const listContainer = document.getElementById('list');
 const lines = rawData.trim().split('\n').filter(l => l.trim().length > 0);
-document.getElementById('count').innerText = `Total Videos: ${lines.length}`;
+const countDisplay = document.getElementById('count');
+
+function updateCounter() {
+    const checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
+    countDisplay.innerText = `Total Videos: ${lines.length} | Completed: ${checkedCount}`;
+}
 
 lines.forEach((link, i) => {
+    const videoId = `vid-${i}`; // Unique ID for each video
+    
+    // Check if it was saved as completed in localStorage
+    const isCompleted = localStorage.getItem(videoId) === 'true';
+
+    // 1. Create Container
+    const div = document.createElement('div');
+    div.className = `item-container ${isCompleted ? 'completed' : ''}`;
+    div.id = `container-${videoId}`;
+
+    // 2. Create Checkbox
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = isCompleted;
+    
+    // Save to localStorage when clicked
+    checkbox.addEventListener('change', (e) => {
+        const checked = e.target.checked;
+        localStorage.setItem(videoId, checked);
+        div.classList.toggle('completed', checked);
+        updateCounter();
+    });
+
+    // 3. Create Link
     const a = document.createElement('a');
     a.href = link;
     a.className = 'link-item';
     a.target = '_blank';
     a.innerHTML = `<span class="index-tag">#${i + 1}</span> ${link}`;
-    listContainer.appendChild(a);
+
+    // Assemble
+    div.appendChild(checkbox);
+    div.appendChild(a);
+    listContainer.appendChild(div);
 });
+
+// Initial count
+updateCounter();
 
 </script>
 </body>
 </html>
-
-```
